@@ -1,1 +1,55 @@
-/* You can add global styles to this file, and also import other style files */
+@use 'styles/tokens';
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--text);
+  background: radial-gradient(ellipse at top, var(--blue-50), transparent 60%), var(--bg);
+  background-repeat: no-repeat;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-title);
+  line-height: 1.2;
+  margin: 0;
+}
+
+code,
+pre {
+  font-family: var(--font-mono);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}/* You can add global styles to this file, and also import other style files */
+
+.container {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--space-8) var(--space-4);
+}

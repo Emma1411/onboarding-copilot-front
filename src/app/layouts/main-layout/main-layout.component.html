@@ -1,0 +1,92 @@
+<header class="navbar">
+  <div class="navbar__inner">
+    <a routerLink="/" class="brand" (click)="closeMenu()">
+      <svg class="brand__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+      <span class="brand__name">Onboarding Copilot</span>
+    </a>
+
+    <nav id="main-nav" class="nav" [class.nav--open]="menuOpen()" aria-label="Navigation principale">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" (click)="closeMenu()">Questions</a>
+      <a routerLink="/comment-ca-marche" routerLinkActive="active" (click)="closeMenu()">Comment ça marche</a>
+      <a routerLink="/decisions" routerLinkActive="active" (click)="closeMenu()">Décisions</a>
+    </nav>
+
+    <div class="actions">
+      <a class="btn-ghost" [href]="links.github" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a class="btn-ghost" [href]="links.linkedin" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <button
+        type="button"
+        class="icon-btn"
+        (click)="theme.toggle()"
+        [attr.aria-label]="theme.theme() === 'dark' ? 'Passer en thème clair' : 'Passer en thème sombre'"
+      >
+        @if (theme.theme() === 'dark') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+          </svg>
+        }
+      </button>
+    </div>
+
+    <button
+      type="button"
+      class="icon-btn menu-btn"
+      aria-controls="main-nav"
+      [attr.aria-expanded]="menuOpen()"
+      aria-label="Ouvrir le menu"
+      (click)="toggleMenu()"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </div>
+</header>
+
+@switch (health.status()) {
+  @case ('waking') {
+    <div class="banner banner--info" role="status">
+      <span>Le serveur se réveille, environ 30 secondes…</span>
+      <span class="progress" aria-hidden="true"></span>
+    </div>
+  }
+  @case ('down') {
+    <div class="banner banner--error" role="alert">
+      <span>Impossible de joindre le serveur.</span>
+      <button type="button" (click)="health.check()">Réessayer</button>
+    </div>
+  }
+  @case ('ready') {
+    @if (health.aiAvailable() === false) {
+      <div class="banner banner--info" role="status">
+        L'IA est en pause pour aujourd'hui. Les réponses affichent les passages trouvés dans la documentation.
+      </div>
+    }
+  }
+}
+
+<main class="content">
+  <router-outlet />
+</main>
+
+<footer class="footer">
+  <div class="footer__inner">
+    <div>
+      <div class="footer__links">
+        <a [href]="links.github" target="_blank" rel="noopener noreferrer">Dépôt GitHub</a>
+        <a [href]="links.linkedin" target="_blank" rel="noopener noreferrer">Profil LinkedIn</a>
+      </div>
+      <p>Réalisé avec Angular et Node.js</p>
+    </div>
+    <p class="footer__privacy">
+      Les questions sont envoyées à DeepSeek pour rédiger la réponse. Ne saisissez pas d'informations confidentielles.
+    </p>
+  </div>
+</footer>
