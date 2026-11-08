@@ -1,0 +1,72 @@
+<article class="card">
+  <header class="card__head">
+    <h2>Réponse</h2>
+    <span class="pill">{{ sourcesCount() }} source{{ sourcesCount() > 1 ? 's' : '' }}</span>
+    @if (cached()) {
+      <span class="pill pill--cache">Réponse instantanée (cache)</span>
+    }
+    <button type="button" class="card__copy" (click)="copy()">{{ copied() ? 'Copié' : 'Copier' }}</button>
+  </header>
+
+  <div class="answer">
+    @for (block of blocks(); track $index) {
+      @if (block.type === 'paragraph') {
+        <p>
+          <ng-container *ngTemplateOutlet="inlines; context: { $implicit: block.inlines }"></ng-container>
+        </p>
+      } @else if (block.type === 'list') {
+        @if (block.ordered) {
+          <ol>
+            @for (item of block.items; track $index) {
+              <li><ng-container *ngTemplateOutlet="inlines; context: { $implicit: item }"></ng-container></li>
+            }
+          </ol>
+        } @else {
+          <ul>
+            @for (item of block.items; track $index) {
+              <li><ng-container *ngTemplateOutlet="inlines; context: { $implicit: item }"></ng-container></li>
+            }
+          </ul>
+        }
+      }
+    }
+  </div>
+
+  <footer class="card__foot">
+    Rédigée par une IA uniquement à partir des extraits cités ci-contre : vérifie les sources avant de t'y fier.
+  </footer>
+</article>
+
+<!-- Rendu d'une ligne : texte, gras, code et citations. Appelé aussi pour les enfants d'un gras. -->
+<ng-template #inlines let-items>
+  @for (item of items; track $index) {
+    @switch (item.type) {
+      @case ('text') {
+        <span>{{ item.value }}</span>
+      }
+      @case ('code') {
+        <code>{{ item.value }}</code>
+      }
+      @case ('citation') {
+        <button
+          type="button"
+          class="cite"
+          [class.cite--active]="highlighted() === item.n"
+          [attr.aria-label]="'Voir la source ' + item.n"
+          (click)="citationClick.emit(item.n)"
+          (mouseenter)="citationHover.emit(item.n)"
+          (mouseleave)="citationHover.emit(null)"
+          (focus)="citationHover.emit(item.n)"
+          (blur)="citationHover.emit(null)"
+        >
+          {{ item.n }}
+        </button>
+      }
+      @case ('bold') {
+        <strong>
+          <ng-container *ngTemplateOutlet="inlines; context: { $implicit: item.children }"></ng-container>
+        </strong>
+      }
+    }
+  }
+</ng-template>

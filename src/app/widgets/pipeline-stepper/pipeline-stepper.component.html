@@ -1,0 +1,30 @@
+<section class="stepper" aria-label="Comment cette réponse a été produite">
+  <header class="stepper__head">
+    <h2>Comment cette réponse a été produite</h2>
+    <div class="stepper__chips">
+      @if (response(); as r) {
+        <span class="meta">Traité en {{ r.meta.durationMs }} ms (serveur)</span>
+        @if (r.meta.model) {
+          <span class="meta">Modèle : {{ r.meta.model }}</span>
+        }
+        @if (validCitations() !== null) {
+          <span class="meta meta--ok">Citations valides : {{ validCitations() }}</span>
+        }
+      }
+    </div>
+  </header>
+
+  <ol class="steps">
+    @for (step of steps(); track step.id; let i = $index) {
+      <li class="step" [attr.data-state]="step.state">
+        <span class="step__icon" aria-hidden="true">{{ icon[step.state] }}</span>
+        <div class="step__body">
+          <span class="step__index">Étape {{ i + 1 }}</span>
+          <strong class="step__label">{{ step.label }}</strong>
+          <span class="step__detail">{{ step.detail }}</span>
+          <span class="sr-only">({{ stateLabel[step.state] }})</span>
+        </div>
+      </li>
+    }
+  </ol>
+</section>

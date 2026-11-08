@@ -1,0 +1,73 @@
+<section class="hero container">
+  <h1>Pose une question à <span class="accent">ce projet.</span></h1>
+  <p class="hero__sub">
+    Les réponses viennent des décisions d'architecture et de la documentation, avec leurs sources.
+  </p>
+
+  <div class="ask-card">
+    <app-search-bar [(value)]="draft" [loading]="store.isLoading()" (submitted)="ask($event)" />
+  </div>
+
+  <div class="chips" aria-label="Questions d'exemple">
+    <span class="chips__label">Essaie :</span>
+    @for (q of examples; track q) {
+      <button type="button" class="chip" [disabled]="store.isLoading()" (click)="ask(q)">{{ q }}</button>
+    }
+  </div>
+</section>
+
+<p class="sr-only" aria-live="polite">{{ statusMessage() }}</p>
+
+@if (store.status() !== 'idle') {
+  <section id="results" class="results container" [attr.aria-busy]="store.isLoading()">
+    @switch (store.status()) {
+      @case ('loading') {
+        <app-pipeline-stepper [questionLength]="store.question().length" />
+        <div class="skeleton" aria-hidden="true">
+          <span class="skeleton__line" style="width: 40%"></span>
+          <span class="skeleton__line" style="width: 95%"></span>
+          <span class="skeleton__line" style="width: 88%"></span>
+          <span class="skeleton__line" style="width: 92%"></span>
+          <span class="skeleton__line" style="width: 60%"></span>
+        </div>
+      }
+
+      @case ('error') {
+        @if (store.error(); as err) {
+          <div class="state-card" [class.state-card--error]="err.code === 'server' || err.code === 'network'" role="alert">
+            <h2>{{ errorTitle(err.code) }}</h2>
+            <p>{{ err.message }}</p>
+            @if (err.code === 'network' || err.code === 'server') {
+              <button type="button" class="retry" (click)="retry()">Réessayer</button>
+            }
+          </div>
+        }
+      }
+
+      @case ('done') {
+        @if (store.response(); as r) {
+          <app-pipeline-stepper
+            [response]="r"
+            [questionLength]="store.question().length"
+            [validCitations]="validCitations()"
+          />
+
+          @if (r.mode === 'no_answer') {
+            <div class="state-card">
+              <h2>Aucune information trouvée</h2>
+              <p>{{ r.answer }}</p>
+              <p class="state-card__hint">Essaie plutôt une de ces questions :</p>
+              <div class="chips chips--inline">
+                @for (q of examples; track q) {
+                  <button type="button" class="chip" (click)="ask(q)">{{ q }}</button>
+                }
+              </div>
+            </div>
+          } @else {
+            <app-answer-panel [response]="r" />
+          }
+        }
+      }
+    }
+  </section>
+}

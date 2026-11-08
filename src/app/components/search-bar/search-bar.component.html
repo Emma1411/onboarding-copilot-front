@@ -1,0 +1,36 @@
+<div class="search" [class.search--error]="showError()">
+  <label class="sr-only" for="question">Ta question sur le projet</label>
+  <input
+    id="question"
+    class="search__input"
+    type="text"
+    autocomplete="off"
+    [attr.maxlength]="max"
+    placeholder="Pourquoi une recherche par mots-clés plutôt qu'une base vectorielle ?"
+    [value]="value()"
+    (input)="onInput($event)"
+    (keydown.enter)="submit()"
+    [attr.aria-invalid]="showError()"
+    aria-describedby="question-help"
+  />
+  <button type="button" class="search__button" [disabled]="loading()" (click)="submit()">
+    @if (loading()) {
+      <span class="spinner" aria-hidden="true"></span>
+      Recherche…
+    } @else {
+      Demander
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M13 6l6 6-6 6" />
+      </svg>
+    }
+  </button>
+</div>
+
+<div class="search__meta" id="question-help">
+  @if (showError()) {
+    <span class="search__error" role="alert">Écris au moins {{ min }} caractères.</span>
+  } @else {
+    <span>Entrée pour envoyer</span>
+  }
+  <span class="counter" [class.counter--near]="value().length > max - 30">{{ value().length }} / {{ max }}</span>
+</div>

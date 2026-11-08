@@ -1,0 +1,61 @@
+<div class="md">
+  @for (block of blocks(); track $index) {
+    @if (block.type === 'heading') {
+      @switch (block.level) {
+        @case (2) {
+          <h2><ng-container *ngTemplateOutlet="inlines; context: { $implicit: block.inlines }"></ng-container></h2>
+        }
+        @case (3) {
+          <h3><ng-container *ngTemplateOutlet="inlines; context: { $implicit: block.inlines }"></ng-container></h3>
+        }
+        @default {
+          <h4><ng-container *ngTemplateOutlet="inlines; context: { $implicit: block.inlines }"></ng-container></h4>
+        }
+      }
+    } @else if (block.type === 'paragraph') {
+      <p><ng-container *ngTemplateOutlet="inlines; context: { $implicit: block.inlines }"></ng-container></p>
+    } @else if (block.type === 'list') {
+      @if (block.ordered) {
+        <ol>
+          @for (item of block.items; track $index) {
+            <li><ng-container *ngTemplateOutlet="inlines; context: { $implicit: item }"></ng-container></li>
+          }
+        </ol>
+      } @else {
+        <ul>
+          @for (item of block.items; track $index) {
+            <li><ng-container *ngTemplateOutlet="inlines; context: { $implicit: item }"></ng-container></li>
+          }
+        </ul>
+      }
+    } @else if (block.type === 'quote') {
+      <blockquote><ng-container *ngTemplateOutlet="inlines; context: { $implicit: block.inlines }"></ng-container></blockquote>
+    } @else if (block.type === 'code') {
+      <figure class="code">
+        @if (block.lang) {
+          <figcaption>{{ block.lang }}</figcaption>
+        }
+        <pre><code>{{ block.value }}</code></pre>
+      </figure>
+    }
+  }
+</div>
+
+<ng-template #inlines let-items>
+  @for (item of items; track $index) {
+    @switch (item.type) {
+      @case ('text') {
+        <span>{{ item.value }}</span>
+      }
+      @case ('code') {
+        <code>{{ item.value }}</code>
+      }
+      @case ('link') {
+        <a [href]="item.href" target="_blank" rel="noopener noreferrer">{{ item.label }}</a>
+      }
+      @case ('bold') {
+        <strong><ng-container *ngTemplateOutlet="inlines; context: { $implicit: item.children }"></ng-container></strong>
+      }
+    }
+  }
+</ng-template>

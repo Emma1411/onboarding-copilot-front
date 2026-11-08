@@ -1,0 +1,37 @@
+@if (response(); as r) {
+  @if (r.mode === 'sources_only') {
+    <app-mode-banner tone="info">
+      La réponse rédigée n'est pas disponible pour le moment. Voici les passages les plus pertinents trouvés dans la documentation.
+    </app-mode-banner>
+  }
+
+  <div class="panel" [class.panel--single]="r.mode !== 'ai'">
+    @if (r.mode === 'ai' && r.answer) {
+      <app-answer-card
+        [answer]="r.answer ?? ''"
+        [sourcesCount]="r.sources.length"
+        [cached]="r.cached === true"
+        [highlighted]="active()"
+        (citationClick)="onCitationClick($event)"
+        (citationHover)="highlighted.set($event)"
+      />
+    }
+
+    <aside class="panel__sources" aria-label="Sources citées">
+      <header class="panel__head">
+        <h2>Sources ({{ r.sources.length }})</h2>
+        <span class="panel__note">Extraits de la documentation du projet</span>
+      </header>
+      <div class="panel__list">
+        @for (source of r.sources; track $index) {
+          <app-source-card
+            [source]="source"
+            [n]="$index + 1"
+            [active]="active() === $index + 1"
+            (hovered)="highlighted.set($event)"
+          />
+        }
+      </div>
+    </aside>
+  </div>
+}

@@ -1,0 +1,24 @@
+<article
+  class="source"
+  [class.source--active]="active()"
+  [id]="'source-' + n()"
+  (mouseenter)="hovered.emit(n())"
+  (mouseleave)="hovered.emit(null)"
+>
+  <header class="source__head">
+    <span class="source__n">{{ n() }}</span>
+    <code class="source__file" [title]="source().file">{{ source().file }}</code>
+    <button type="button" class="source__copy" (click)="copyPath()" [attr.aria-label]="'Copier le chemin ' + source().file">
+      {{ copied() ? 'Copié' : 'Copier' }}
+    </button>
+  </header>
+
+  <h3 class="source__heading">§ {{ source().heading }}</h3>
+  <p class="source__excerpt" [class.source__excerpt--clamped]="isLong() && !expanded()">{{ excerpt() }}</p>
+
+  @if (isLong()) {
+    <button type="button" class="source__more" (click)="expanded.set(!expanded())" [attr.aria-expanded]="expanded()">
+      {{ expanded() ? 'Voir moins' : 'Voir plus' }}
+    </button>
+  }
+</article>
