@@ -10,7 +10,7 @@ export const routes: Routes = [
         path: '',
         pathMatch: 'full',
         title: 'Questions · Onboarding Copilot',
-        loadComponent: () => import('@pages/ask/ask.page').then((m) => m.AskPage),
+        loadComponent: () => import('@pages/ask/ask.page').then((m) => m.AskPage), 
       },
       {
         path: 'comment-ca-marche',

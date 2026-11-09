@@ -1,0 +1,135 @@
+<section class="container">
+  <header class="head">
+    @if (store.listStatus() === 'ready') {
+      <p class="head__eyebrow">
+        {{ store.list().length }} décision{{ store.list().length > 1 ? 's' : '' }} répertoriée{{ store.list().length > 1 ? 's' : '' }}
+      </p>
+    }
+    <h1>Décisions d'architecture (ADR)</h1>
+    <p class="head__sub">
+      L'historique des choix techniques de ce projet : pourquoi chaque option a été retenue ou écartée, et avec quelles conséquences.
+    </p>
+  </header>
+
+  @switch (store.listStatus()) {
+    @case ('error') {
+      <div class="state-card state-card--error" role="alert">
+        <h2>Impossible de charger les décisions</h2>
+        <p>Le serveur ne répond pas. S'il vient de se réveiller, réessaie dans un instant.</p>
+        <button type="button" class="retry" (click)="store.loadList(true)">Réessayer</button>
+      </div>
+    }
+
+    @case ('ready') {
+      <div class="filters">
+        <label class="sr-only" for="adr-search">Filtrer les décisions</label>
+        <input
+          id="adr-search"
+          class="filters__search"
+          type="search"
+          autocomplete="off"
+          placeholder="Filtrer par titre, tag ou résumé (ex : cache, sécurité)"
+          [value]="query()"
+          (input)="onQuery($event)"
+        />
+
+        <div class="chips" role="group" aria-label="Filtrer par statut">
+          @for (option of statusOptions(); track option.value) {
+            <button
+              type="button"
+              class="chip"
+              [attr.data-status]="option.value"
+              [attr.aria-pressed]="statusFilter() === option.value"
+              (click)="statusFilter.set(option.value)"
+            >
+              {{ option.label }} <span class="chip__count">{{ option.count }}</span>
+            </button>
+          }
+        </div>
+
+        @if (tags().length) {
+          <div class="chips" role="group" aria-label="Filtrer par tag">
+            @for (tag of tags(); track tag) {
+              <button type="button" class="chip chip--tag" [attr.aria-pressed]="tagFilter() === tag" (click)="toggleTag(tag)">
+                #{{ tag }}
+              </button>
+            }
+          </div>
+        }
+
+        @if (hasFilters()) {
+          <button type="button" class="link" (click)="resetFilters()">Réinitialiser les filtres</button>
+        }
+      </div>
+
+      <div class="layout" [class.layout--selected]="selectedId() !== null">
+        <div class="list">
+          @if (filtered().length) {
+            <app-adr-timeline [adrs]="filtered()" [selectedId]="detailId()" />
+          } @else {
+            <div class="state-card">
+              <h2>Aucune décision ne correspond</h2>
+              <p>Essaie un autre mot-clé ou retire un filtre.</p>
+              <button type="button" class="retry" (click)="resetFilters()">Réinitialiser les filtres</button>
+            </div>
+          }
+        </div>
+
+        <div class="detail">
+          <a class="back" routerLink="/decisions">← Toutes les décisions</a>
+
+          @switch (store.detailStatus()) {
+            @case ('ready') {
+              @if (store.detail(); as adr) {
+                <app-adr-detail [adr]="adr" />
+              }
+            }
+            @case ('not_found') {
+              <div class="state-card">
+                <h2>Décision introuvable</h2>
+                <p>Cette décision n'existe pas ou n'existe plus.</p>
+                <a class="retry" routerLink="/decisions">Voir toutes les décisions</a>
+              </div>
+            }
+            @case ('error') {
+              <div class="state-card state-card--error" role="alert">
+                <h2>Impossible de charger cette décision</h2>
+                <button type="button" class="retry" (click)="retryDetail()">Réessayer</button>
+              </div>
+            }
+            @default {
+              <div class="skeleton" aria-hidden="true">
+                <span class="skeleton__line" style="width: 30%"></span>
+                <span class="skeleton__line" style="width: 70%; height: 24px"></span>
+                <span class="skeleton__line" style="width: 95%"></span>
+                <span class="skeleton__line" style="width: 90%"></span>
+                <span class="skeleton__line" style="width: 60%"></span>
+              </div>
+            }
+          }
+        </div>
+      </div>
+    }
+
+    @default {
+      <div class="layout" aria-hidden="true">
+        <div class="list">
+          @for (n of [1, 2, 3]; track n) {
+            <div class="skeleton skeleton--card">
+              <span class="skeleton__line" style="width: 40%"></span>
+              <span class="skeleton__line" style="width: 85%"></span>
+              <span class="skeleton__line" style="width: 70%"></span>
+            </div>
+          }
+        </div>
+        <div class="detail">
+          <div class="skeleton">
+            <span class="skeleton__line" style="width: 30%"></span>
+            <span class="skeleton__line" style="width: 70%; height: 24px"></span>
+            <span class="skeleton__line" style="width: 95%"></span>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</section>

@@ -1,0 +1,7 @@
+<ol class="timeline">
+  @for (adr of adrs(); track adr.id) {
+    <li class="timeline__item" [attr.data-status]="adr.status">
+      <app-adr-card [adr]="adr" [selected]="adr.id === selectedId()" />
+    </li>
+  }
+</ol>

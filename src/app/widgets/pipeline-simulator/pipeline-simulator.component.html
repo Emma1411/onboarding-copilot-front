@@ -1,0 +1,49 @@
+<section class="sim" aria-labelledby="sim-title">
+  <header class="sim__head">
+    <h2 id="sim-title">Rejoue une vraie requête</h2>
+    <p>
+      Choisis une question : elle part réellement vers l'API, et chaque étape s'allume avec les données renvoyées par le serveur.
+    </p>
+  </header>
+
+  <div class="chips" role="group" aria-label="Question à envoyer">
+    @for (q of questions; track q) {
+      <button
+        type="button"
+        class="chip"
+        [attr.aria-pressed]="selected() === q"
+        [disabled]="running()"
+        (click)="selected.set(q)"
+      >
+        {{ q }}
+      </button>
+    }
+  </div>
+
+  <div class="sim__actions">
+    <button type="button" class="run" [disabled]="running()" (click)="run()">
+      @if (running()) {
+        Requête en cours…
+      } @else {
+        Lancer la requête
+      }
+    </button>
+    @if (started()) {
+      <button type="button" class="link" [disabled]="running()" (click)="reset()">Réinitialiser</button>
+    }
+    <span class="sim__note">
+      Chaque lancement compte dans ta limite de 15 requêtes par heure. Relance la même question pour voir le cache répondre.
+    </span>
+  </div>
+
+  @if (error(); as message) {
+    <app-mode-banner tone="error">{{ message }}</app-mode-banner>
+  }
+
+  @if (started() && !error()) {
+    <app-pipeline-stepper [response]="response()" [questionLength]="selected().length" [reveal]="reveal()" />
+    @if (outcome(); as text) {
+      <p class="sim__outcome" aria-live="polite">{{ text }}</p>
+    }
+  }
+</section>

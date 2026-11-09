@@ -1,0 +1,44 @@
+:host {
+  display: block;
+}
+
+.timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0 0 0 24px;
+  border-left: 2px solid var(--border);
+  list-style: none;
+}
+
+.timeline__item {
+  position: relative;
+  --c: var(--text-muted);
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: -31px;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    background: var(--c);
+  }
+
+  &[data-status='accepted'] {
+    --c: var(--status-accepted);
+  }
+  &[data-status='proposed'] {
+    --c: var(--status-proposed);
+  }
+  &[data-status='rejected'] {
+    --c: var(--status-rejected);
+  }
+  &[data-status='superseded'] {
+    --c: var(--status-superseded);
+  }
+}

@@ -1,0 +1,26 @@
+<a
+  class="adr"
+  [routerLink]="[]"
+  [queryParams]="{ adr: adr().id }"
+  [class.adr--selected]="selected()"
+  [attr.aria-current]="selected() ? 'true' : null"
+>
+  <span class="adr__top">
+    <span class="adr__code">{{ code() }}</span>
+    <app-status-badge [status]="adr().status" />
+    @if (date()) {
+      <span class="adr__date">{{ date() }}</span>
+    }
+  </span>
+
+  <span class="adr__title">{{ adr().title }}</span>
+  <span class="adr__summary">{{ adr().summary }}</span>
+
+  @if (adr().tags.length) {
+    <span class="adr__tags">
+      @for (tag of adr().tags; track tag) {
+        <span class="tag">#{{ tag }}</span>
+      }
+    </span>
+  }
+</a>

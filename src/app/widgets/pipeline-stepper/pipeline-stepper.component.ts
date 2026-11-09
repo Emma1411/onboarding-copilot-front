@@ -20,6 +20,7 @@ export class PipelineStepperComponent {
   readonly response = input<AskResponse | null>(null);
   readonly questionLength = input(0);
   readonly validCitations = input<number | null>(null);
+  readonly reveal = input(4);
 
   protected readonly stateLabel: Record<StepState, string> = {
     done: 'terminée',
@@ -80,13 +81,32 @@ export class PipelineStepperComponent {
       const parts: string[] = [];
       if (r.meta.tokens != null) parts.push(`${r.meta.tokens} tokens`);
       if (r.meta.llmMs != null) parts.push(`${(r.meta.llmMs / 1000).toFixed(1)} s`);
-      llm = { id: 'llm', label: 'Synthèse IA', detail: parts.join(' · ') || 'Réponse rédigée', state: 'done' };
+      llm = {
+        id: 'llm',
+        label: 'Synthèse IA',
+        detail: parts.join(' · ') || 'Réponse rédigée',
+        state: 'done',
+      };
     } else if (r.mode === 'sources_only') {
-      llm = { id: 'llm', label: 'Synthèse IA', detail: 'Indisponible : sources seules', state: 'skipped' };
+      llm = {
+        id: 'llm',
+        label: 'Synthèse IA',
+        detail: 'Indisponible : sources seules',
+        state: 'skipped',
+      };
     } else {
-      llm = { id: 'llm', label: 'Synthèse IA', detail: 'Non sollicitée : rien de pertinent', state: 'skipped' };
+      llm = {
+        id: 'llm',
+        label: 'Synthèse IA',
+        detail: 'Non sollicitée : rien de pertinent',
+        state: 'skipped',
+      };
     }
 
-    return [question, cache, search, llm];
+    const all = [question, cache, search, llm];
+    const shown = this.reveal();
+    return all.map((step, i): Step =>
+      i < shown ? step : { ...step, state: 'pending', detail: 'En attente' },
+    );
   });
 }

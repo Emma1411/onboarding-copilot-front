@@ -1,0 +1,89 @@
+<section class="container hero">
+  <span class="pill">Pipeline de traitement</span>
+  <h1>Comment ça marche ?</h1>
+  <p class="hero__sub">
+    Du clic à la réponse sourcée : quatre étapes, de la moins chère à la plus chère. Chacune peut arrêter la requête avant qu'elle n'atteigne l'IA.
+  </p>
+</section>
+
+<section class="container block" aria-labelledby="steps-title">
+  <h2 id="steps-title" class="block__title">Le parcours d'une question</h2>
+  <div class="grid grid--4">
+    @for (step of steps; track step.title) {
+      <app-info-card [eyebrow]="step.eyebrow" [title]="step.title" [text]="step.text" [tags]="step.tags" />
+    }
+  </div>
+  <p class="note">
+    Les étapes 1 à 3 sont déterministes : la même question retrouve les mêmes passages. L'étape 4 ne l'est pas strictement : une température basse réduit les variations sans les supprimer.
+  </p>
+</section>
+
+<section class="container block">
+  <app-pipeline-simulator />
+</section>
+
+<section class="container block" aria-labelledby="prompt-title">
+  <div class="split">
+    <div class="split__text">
+      <h2 id="prompt-title" class="block__title">Ce que l'IA reçoit vraiment</h2>
+      <p>
+        Elle ne voit ni la documentation entière, ni d'autres conversations : seulement les passages retenus par la recherche, la question, et ces consignes. Si les extraits ne contiennent pas la réponse, elle doit le dire.
+      </p>
+      <p>
+        Une réponse peut malgré tout être imparfaite : c'est pourquoi chaque affirmation renvoie à une source que tu peux vérifier.
+      </p>
+    </div>
+    <figure class="code">
+      <figcaption>backend/src/llm/prompt.js</figcaption>
+      <pre><code>{{ prompt }}</code></pre>
+    </figure>
+  </div>
+</section>
+
+<section class="container block" aria-labelledby="guards-title">
+  <h2 id="guards-title" class="block__title">Garde-fous en production</h2>
+  <p class="block__sub">Trois couches protègent le budget et la disponibilité de la démo.</p>
+  <div class="grid grid--3">
+    @for (item of safeguards; track item.title) {
+      <app-info-card [eyebrow]="item.eyebrow" [title]="item.title" [text]="item.text" [tags]="item.tags" />
+    }
+  </div>
+</section>
+
+<section class="container block" aria-labelledby="limits-title">
+  <div class="panel">
+    <h2 id="limits-title" class="block__title">Limites connues</h2>
+    <ul class="limits">
+      @for (limit of limits; track limit) {
+        <li>{{ limit }}</li>
+      }
+    </ul>
+  </div>
+</section>
+
+<section class="container block" aria-labelledby="privacy-title">
+  <div class="privacy">
+    <svg class="privacy__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <rect x="3" y="11" width="18" height="11" rx="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+    <div class="privacy__text">
+      <h2 id="privacy-title">Confidentialité et transparence</h2>
+      <p>
+        La question et les passages trouvés sont envoyés à l'API DeepSeek pour rédiger la réponse : n'y saisis aucune information confidentielle. L'app n'a pas de base de données ni de comptes : les questions ne sont gardées que dans la mémoire du serveur, jusqu'à 24 heures. Le code source est public.
+      </p>
+    </div>
+    <a class="btn" [href]="githubUrl" target="_blank" rel="noopener noreferrer">Inspecter le code</a>
+  </div>
+</section>
+
+<section class="container block cta">
+  <div class="cta__text">
+    <h2>Prêt à tester l'application ?</h2>
+    <p>Pose ta propre question, ou parcours les décisions d'architecture qui servent de base documentaire.</p>
+  </div>
+  <div class="cta__actions">
+    <a class="btn btn--primary" routerLink="/">Poser une question</a>
+    <a class="btn" routerLink="/decisions">Consulter les décisions</a>
+  </div>
+</section>

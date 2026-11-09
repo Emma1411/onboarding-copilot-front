@@ -1,0 +1,34 @@
+<article class="detail">
+  <header class="detail__head">
+    <div class="detail__meta">
+      <span class="detail__code">{{ code() }}</span>
+      <app-status-badge [status]="adr().status" />
+      @if (date()) {
+        <span class="detail__date">{{ date() }}</span>
+      }
+    </div>
+
+    <h2 class="detail__title">{{ adr().title }}</h2>
+    @if (adr().summary) {
+      <p class="detail__summary">{{ adr().summary }}</p>
+    }
+
+    @if (adr().tags.length) {
+      <div class="detail__tags">
+        @for (tag of adr().tags; track tag) {
+          <span class="tag">#{{ tag }}</span>
+        }
+      </div>
+    }
+
+    <div class="detail__actions">
+      <button type="button" class="btn" (click)="copyMarkdown()">
+        {{ copied() ? 'Copié' : 'Copier le Markdown' }}
+      </button>
+      <a class="btn" [href]="sourceUrl()" target="_blank" rel="noopener noreferrer">Voir sur GitHub</a>
+      <code class="detail__file" [title]="adr().file">{{ adr().file }}</code>
+    </div>
+  </header>
+
+  <app-markdown-view [markdown]="adr().content" />
+</article>
